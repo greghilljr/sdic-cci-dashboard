@@ -1,0 +1,6 @@
+# Whitelist: ignore everything except the files the site needs
+*
+!.gitignore
+!.nojekyll
+!index.html
+!README.md
