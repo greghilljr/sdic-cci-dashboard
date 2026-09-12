@@ -507,7 +507,14 @@ footer.notes li { margin-bottom: 8px; }
       list = LEAS.map((l, i) => [l, i]).filter(([l]) => l.cds === state.area || (!l.agg && l.county === c));
     }
     const aggs = list.filter(([l]) => l.agg), leas = list.filter(([l]) => !l.agg).sort((a, b) => a[0].name.localeCompare(b[0].name));
-    const opt = ([l, i]) => `<option value="${i}">${l.name}${l.charter ? ' (charter)' : ''}${(state.area === 'STATE' || state.area.startsWith('REGION-')) && !l.agg ? ' · ' + l.county : ''}</option>`;
+    // Disambiguate only names that repeat within this list: add the county, then the CDS code if the county repeats too.
+    const byName = new Map(), byNameCounty = new Map();
+    leas.forEach(([l]) => { byName.set(l.name, (byName.get(l.name) || 0) + 1); const k = l.name + '|' + l.county; byNameCounty.set(k, (byNameCounty.get(k) || 0) + 1); });
+    const opt = ([l, i]) => {
+      let t = l.name + (l.charter ? ' (charter)' : '');
+      if (!l.agg && byName.get(l.name) > 1) { t += ' · ' + l.county; if (byNameCounty.get(l.name + '|' + l.county) > 1) t += ' · CDS ' + l.cds; }
+      return `<option value="${i}">${t}</option>`;
+    };
     leaSel.innerHTML = (aggs.length ? `<optgroup label="Roll-ups">${aggs.map(opt).join('')}</optgroup>` : '') + `<optgroup label="Districts and charters">${leas.map(opt).join('')}</optgroup>`;
     if (![...list].some(([, i]) => i === state.lea)) state.lea = list[0][1];
     leaSel.value = state.lea;
