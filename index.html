@@ -27,6 +27,7 @@
   --series-1-soft: rgba(42,120,214,0.12);
   --series-2: #c8860f;
   --seq-strong: #223365;
+  --seq-mid: #6177a0;
   --seq-light: #c8ccd8;
   --crit: #d03b3b;
   --crit-wash: rgba(208,59,59,0.13);
@@ -60,7 +61,8 @@
     --series-1: #5aa0f0;
     --series-1-soft: rgba(90,160,240,0.18);
     --series-2: #f6b336;
-    --seq-strong: #6177a0;
+    --seq-strong: #8fa8d2;
+    --seq-mid: #55699a;
     --seq-light: #34406a;
     --crit: #e66767;
     --crit-wash: rgba(230,103,103,0.18);
@@ -93,7 +95,8 @@
   --series-1: #5aa0f0;
   --series-1-soft: rgba(90,160,240,0.18);
   --series-2: #f6b336;
-  --seq-strong: #6177a0;
+  --seq-strong: #8fa8d2;
+  --seq-mid: #55699a;
   --seq-light: #34406a;
   --crit: #e66767;
   --crit-wash: rgba(230,103,103,0.18);
@@ -178,7 +181,7 @@ button.tool[disabled] { opacity: 0.6; cursor: wait; }
   :root, :root[data-theme="dark"] {
     --bg: #ffffff; --surface: #ffffff; --surface-2: #eef0f5; --ink: #223365; --ink-2: #4a5679; --muted: #6f7891;
     --grid: #e3e6ee; --line: #c8ccd8; --accent: #223365; --accent-ink: #ffffff; --link: #6177a0;
-    --series-1: #2a78d6; --series-1-soft: rgba(42,120,214,0.12); --series-2: #c8860f; --seq-strong: #223365; --seq-light: #c8ccd8;
+    --series-1: #2a78d6; --series-1-soft: rgba(42,120,214,0.12); --series-2: #c8860f; --seq-strong: #223365; --seq-mid: #6177a0; --seq-light: #c8ccd8;
     --crit: #d03b3b; --crit-wash: rgba(208,59,59,0.13); --warn: #b97800; --warn-wash: rgba(246,179,54,0.22);
     --cv-wash: rgba(97,119,160,0.14); --logo-filter: none; --shadow: none;
   }
@@ -257,16 +260,16 @@ table.heat tr.sel td.g::before { content: ""; display: inline-block; width: 8px;
 .chart .cv { fill: var(--cv-wash); }
 .chart .cv-label { fill: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; }
 .chart .bar { fill: var(--seq-strong); }
-.chart .bar-gap { fill: var(--gold); }
+.chart .bar-gap { fill: var(--seq-mid); }
 .chart .bar-ext { fill: var(--seq-light); }
 .chart .bar-lbl.gap { fill: var(--ink-2); }
 .legend-line .lb-done i, .legend-line .lb-gap i, .legend-line .lb-ext i { width: 14px; height: 10px; border: 0; vertical-align: -1px; }
 .legend-line .lb-done i { background: var(--seq-strong); }
-.legend-line .lb-gap i { background: var(--gold); }
+.legend-line .lb-gap i { background: var(--seq-mid); }
 .legend-line .lb-ext i { background: var(--seq-light); }
-.chart .bar-lbl { fill: var(--ink); font-size: 12px; font-variant-numeric: tabular-nums; }
-.chart .bar-name { fill: var(--ink-2); font-size: 12.5px; }
-.chart .bar-sub { fill: var(--muted); font-size: 11px; }
+.chart .bar-lbl { fill: var(--ink); font-size: 11px; font-variant-numeric: tabular-nums; }
+.chart .bar-name { fill: var(--ink-2); font-size: 11.5px; font-weight: 600; }
+.chart .bar-sub { fill: var(--muted); font-size: 10px; }
 .legend-line { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--ink-2); margin-top: 8px; }
 .legend-line i { display: inline-block; width: 18px; height: 0; border-top: 2px solid; margin-right: 6px; vertical-align: 3px; }
 .legend-line .l1 i { border-color: var(--series-1); }
@@ -460,7 +463,7 @@ footer.notes li { margin-bottom: 8px; }
       <li><b>Equity Index (EI)</b> asks whether the group's share of pathway completers is as large as its share of the graduating class. If Hispanic students are 45% of graduates but 35% of completers, the index is about 0.78. Below 0.85 counts as a gap.</li>
       <li><b>Percentage Point Gap minus one (PPG-1)</b> asks whether the group's completion rate is below the rate of everyone else. "Minus one" means the group itself is left out of the comparison rate. A negative gap larger than the margin of error counts as a gap.</li>
       <li><b>Y, Y*, Y**.</b> Y means both checks agree. Y* means the same for a group of 30–50 students, and Y** for 10–29, where results are less certain. Groups under 10 students are not reported (*).</li>
-      <li><b>Parity</b> means the group completes pathways at the same rate as its peers. <b>Additional completers needed</b> is how many more students from the group would have had to complete a pathway to get there. Because the two checks define the peer rate slightly differently, a range is shown.</li>
+      <li><b>Parity</b> means the group completes pathways at the same rate as its peers. <b>Additional completers needed</b> is how many more students from the group would have had to complete a pathway to get there. The two checks define the peer rate slightly differently, so each gives its own estimate; the lower and upper estimates are shown as a range.</li>
     </ul>
     <h3>Data notes</h3>
     <ul>
@@ -719,7 +722,7 @@ footer.notes li { margin-bottom: 8px; }
     const rows = GROUPS.filter(g => g !== 'All Students').map(g => ({ g, r: state.basis === 'cur' ? get(lea, g, yl) : getPool(lea, g) }))
       .filter(x => x.r && isFlag(x.r.flag) && x.r.emin != null).sort((a, b) => b.r.emax - a.r.emax);
     const basisText = state.basis === 'cur' ? `class of ${YEARS[yl]}` : 'five cohorts pooled (2021–2025)';
-    document.getElementById('bars-hint').textContent = `${LEAS[lea].name}, ${basisText}. Only groups flagged for disproportionate impact are shown. The full bar is where the group would be at parity: the students who did complete a pathway, plus the additional completers the group was short.`;
+    document.getElementById('bars-hint').textContent = `${LEAS[lea].name}, ${basisText}. Only groups flagged for disproportionate impact are shown. Each bar is what the group's completers would look like at parity: dark blue is students who completed a pathway, mid blue adds the completers needed under the lower of the two estimates, and light blue extends the bar to the upper estimate.`;
     if (!rows.length) { host.innerHTML = '<div class="empty">No group is flagged for disproportionate impact on this basis.</div>'; document.getElementById('bars-legend').innerHTML = ''; return; }
     const W = 640, rh = 42, m = { t: 8, r: 170, b: 8, l: 200 }, H = m.t + rows.length * rh + m.b, iw = W - m.l - m.r;
     const vmax = Math.max(...rows.map(x => x.r.outcome + x.r.emax)), sx = v => v / vmax * iw;
@@ -738,7 +741,7 @@ footer.notes li { margin-bottom: 8px; }
     });
     svg += '</svg>';
     host.innerHTML = svg;
-    document.getElementById('bars-legend').innerHTML = '<span class="lb-done"><i></i>Completed a pathway</span><span class="lb-gap"><i></i>Additional completers needed to reach parity</span><span class="lb-ext"><i></i>Range between the two methods\' targets</span>';
+    document.getElementById('bars-legend').innerHTML = '<span class="lb-done"><i></i>Completed a pathway</span><span class="lb-gap"><i></i>Additional needed for parity, lower estimate</span><span class="lb-ext"><i></i>Additional needed, up to the upper estimate</span>';
     host.querySelectorAll('rect[data-i]').forEach(el => {
       el.addEventListener('mousemove', e => {
         const x = rows[+el.dataset.i], hr = host.getBoundingClientRect();
